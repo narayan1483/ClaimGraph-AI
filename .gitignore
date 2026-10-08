@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+venv/
+.venv/
+*.so
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+
+# Docker
+docker-compose.override.yml
+
+# MLflow (future)
+mlruns/
+mlartifacts/
+
+# Logs
+logs/
+*.log
+
+# Data / uploads
+uploads/
+data/raw/
+data/processed/
+
+# Secrets
+*.pem
+*.key
