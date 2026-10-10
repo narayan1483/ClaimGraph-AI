@@ -20,57 +20,57 @@
   "fraud_prevalence": 0.3085,
   "models_comparison": {
     "LogisticRegression": {
-      "precision": 0.9122,
-      "recall": 0.9201,
-      "f1_score": 0.9161,
-      "roc_auc": 0.9843,
-      "pr_auc": 0.9705,
+      "precision": 0.9118,
+      "recall": 0.9158,
+      "f1_score": 0.9138,
+      "roc_auc": 0.9851,
+      "pr_auc": 0.9714,
       "confusion_matrix": [
         [
           996,
           41
         ],
         [
-          37,
-          426
+          39,
+          424
         ]
       ]
     },
     "RandomForest": {
-      "precision": 0.9625,
-      "recall": 0.9417,
-      "f1_score": 0.952,
-      "roc_auc": 0.9926,
-      "pr_auc": 0.9882,
+      "precision": 0.9563,
+      "recall": 0.946,
+      "f1_score": 0.9511,
+      "roc_auc": 0.9902,
+      "pr_auc": 0.9862,
       "confusion_matrix": [
         [
-          1020,
-          17
+          1017,
+          20
         ],
         [
-          27,
-          436
+          25,
+          438
         ]
       ]
     },
     "XGBoost": {
-      "precision": 0.9611,
-      "recall": 0.9611,
-      "f1_score": 0.9611,
-      "roc_auc": 0.9959,
-      "pr_auc": 0.9928,
+      "precision": 0.9607,
+      "recall": 0.9503,
+      "f1_score": 0.9555,
+      "roc_auc": 0.9947,
+      "pr_auc": 0.9914,
       "confusion_matrix": [
         [
           1019,
           18
         ],
         [
-          18,
-          445
+          23,
+          440
         ]
       ]
     }
   },
-  "trained_at": "2026-10-08T11:56:27.951019",
+  "trained_at": "2026-10-10T10:26:32.797491",
   "model_version": "v1.0.0-phase3"
 }

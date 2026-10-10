@@ -18,7 +18,8 @@ import random
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.claims.models import ClaimStatus, ClaimType
+from app.audit.models import AuditLog
+from app.claims.models import Claim, ClaimStatus, ClaimType
 from app.claims.repository import ClaimRepository
 from app.core.database import async_session_factory
 from app.core.security import hash_password
@@ -27,6 +28,7 @@ from app.devices.models import Device, Product
 from app.fraud.dataset_generator import PRODUCTS, LOCATIONS, REPAIR_SHOPS
 from app.fraud.service import FraudPredictionService
 from app.fraud.trainer import train_and_evaluate_models
+from app.investigation.models import Investigator
 from app.users.models import Organization, User, UserRole
 
 
@@ -185,7 +187,7 @@ async def seed_data() -> None:
                 cust = customers[cfg["customer_idx"]]
                 # Find device for customer
                 d_res = await db.execute(select(Device).where(Device.customer_id == cust.id))
-                dev = d_res.scalar_one_or_none()
+                dev = d_res.scalars().first()
                 if dev:
                     claim = await ClaimRepository.create(
                         db=db,

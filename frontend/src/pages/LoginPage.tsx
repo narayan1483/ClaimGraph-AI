@@ -21,22 +21,24 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+  const rawFrom = (location.state as { from?: { pathname: string } })?.from?.pathname;
+  const targetPath = (!rawFrom || rawFrom === '/login' || rawFrom.startsWith('/login')) ? '/' : rawFrom;
 
   const [isRegister, setIsRegister] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('investigator@claimgraph.ai');
+  const [password, setPassword] = useState('InvestigatorPass123!');
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState<'INVESTIGATOR' | 'ADMIN' | 'ANALYST' | 'CUSTOMER'>('INVESTIGATOR');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // If already logged in, redirect
+  // If already logged in with stored JWT token, redirect to target
   React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
+    const token = localStorage.getItem('access_token');
+    if (token && isAuthenticated) {
+      navigate(targetPath, { replace: true });
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, navigate, targetPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,16 +48,17 @@ export default function LoginPage() {
     try {
       if (isRegister) {
         await register({
-          email,
-          password,
-          full_name: fullName,
+          email: email.trim(),
+          password: password.trim(),
+          full_name: fullName.trim(),
           role,
         });
       } else {
-        await login({ email, password });
+        await login({ email: email.trim(), password: password.trim() });
       }
-      navigate(from, { replace: true });
+      navigate(targetPath, { replace: true });
     } catch (err: unknown) {
+      console.error('Login submit error:', err);
       setErrorMessage(
         err instanceof Error ? err.message : 'Authentication failed. Please verify credentials.'
       );

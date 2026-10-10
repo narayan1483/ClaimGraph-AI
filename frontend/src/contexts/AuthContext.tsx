@@ -67,9 +67,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('access_token', tokenData.access_token);
       localStorage.setItem('refresh_token', tokenData.refresh_token);
       
-      const currentUser = await authService.getCurrentUser();
-      setUser(currentUser);
+      if (tokenData.user) {
+        setUser(tokenData.user);
+      } else {
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+      }
     } catch (err: unknown) {
+      console.error('Auth login failure:', err);
       const message =
         err && typeof err === 'object' && 'response' in err
           ? (err as { response?: { data?: { error?: { message?: string } } } }).response?.data
