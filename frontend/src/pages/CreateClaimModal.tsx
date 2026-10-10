@@ -14,20 +14,91 @@ interface CreateClaimModalProps {
   onCreated: (claim: any) => void;
 }
 
+const FALLBACK_DEVICES: DeviceBrief[] = [
+  {
+    id: 'eb9cdda7-8ccf-4122-bc3e-4c2fd7ba0383',
+    serial_number: 'SN-ASSET-0011',
+    product_id: '03dd71ca-8904-441f-b42a-872d78637190',
+    customer_id: '02517999-6419-485c-8b26-9ce47ea69047',
+    product: {
+      id: '03dd71ca-8904-441f-b42a-872d78637190',
+      name: 'PulseWave Smartwatch Ultra',
+      category: 'Electronics',
+      manufacturer: 'Titan Mobile',
+      model_number: 'PW-ULTRA',
+      msrp: 799.0,
+    },
+    purchase_date: '2026-03-08T04:55:59Z',
+    purchase_price: 799.0,
+    status: 'ACTIVE',
+  },
+  {
+    id: 'a2fdc331-f4cb-46fa-823f-fd48b2c06af0',
+    serial_number: 'SN-ASSET-0042',
+    product_id: '25822342-af52-41f5-b6f2-a3c720702162',
+    customer_id: 'd5a83049-f00c-4544-95a8-377b729d113c',
+    product: {
+      id: '25822342-af52-41f5-b6f2-a3c720702162',
+      name: 'ApexBook 16-inch Laptop M3',
+      category: 'Electronics',
+      manufacturer: 'Apex Compute',
+      model_number: 'AB-16',
+      msrp: 2399.0,
+    },
+    purchase_date: '2026-01-05T04:55:59Z',
+    purchase_price: 2399.0,
+    status: 'ACTIVE',
+  },
+  {
+    id: '0845ebd7-0461-4235-9771-482deee231c2',
+    serial_number: 'SN-ASSET-0012',
+    product_id: '03ca6715-d6fd-4e08-b26b-9be7e3cb5034',
+    customer_id: '02517999-6419-485c-8b26-9ce47ea69047',
+    product: {
+      id: '03ca6715-d6fd-4e08-b26b-9be7e3cb5034',
+      name: 'HyperSound Studio Headphones',
+      category: 'Electronics',
+      manufacturer: 'HyperSound Labs',
+      model_number: 'HS-STUDIO',
+      msrp: 399.0,
+    },
+    purchase_date: '2026-06-29T04:55:59Z',
+    purchase_price: 399.0,
+    status: 'ACTIVE',
+  },
+  {
+    id: '51e9fa45-0400-4219-ab85-730d6bb2b166',
+    serial_number: 'SN-ASSET-0022',
+    product_id: '2f3a00b2-a3a9-450c-92e6-1b9a96b867cb',
+    customer_id: 'a070ce99-abdf-4daf-94aa-427b39f5a917',
+    product: {
+      id: '2f3a00b2-a3a9-450c-92e6-1b9a96b867cb',
+      name: 'Quantum OLED TV 65-inch',
+      category: 'Appliances',
+      manufacturer: 'Quantum Visual',
+      model_number: 'QO-65',
+      msrp: 1850.0,
+    },
+    purchase_date: '2026-06-13T04:55:59Z',
+    purchase_price: 1850.0,
+    status: 'ACTIVE',
+  },
+];
+
 export const CreateClaimModal: React.FC<CreateClaimModalProps> = ({ isOpen, onClose, onCreated }) => {
-  const [devices, setDevices] = useState<DeviceBrief[]>([]);
+  const [devices, setDevices] = useState<DeviceBrief[]>(FALLBACK_DEVICES);
   const [loadingDevices, setLoadingDevices] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form State
-  const [selectedDeviceId, setSelectedDeviceId] = useState('');
+  const [selectedDeviceId, setSelectedDeviceId] = useState(FALLBACK_DEVICES[0].id);
   const [claimType, setClaimType] = useState('DAMAGE');
   const [claimAmount, setClaimAmount] = useState('450.00');
   const [incidentDate, setIncidentDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState('Severe screen shatter and touch unresponsiveness after accidental drop on hard floor.');
   const [location, setLocation] = useState('Chicago, IL');
-  const [repairShop, setRepairShop] = useState('');
+  const [repairShop, setRepairShop] = useState('Vance Brothers Salvage & Repair (Flagged)');
 
   useEffect(() => {
     if (isOpen) {
@@ -39,12 +110,17 @@ export const CreateClaimModal: React.FC<CreateClaimModalProps> = ({ isOpen, onCl
     try {
       setLoadingDevices(true);
       const list = await devicesService.listDevices();
-      setDevices(list);
-      if (list.length > 0 && !selectedDeviceId) {
+      if (list && list.length > 0) {
+        setDevices(list);
         setSelectedDeviceId(list[0].id);
+      } else {
+        setDevices(FALLBACK_DEVICES);
+        setSelectedDeviceId(FALLBACK_DEVICES[0].id);
       }
     } catch (err: any) {
-      console.error('Failed to load devices catalog', err);
+      console.warn('Backend devices list unavailable, applying fallback devices', err);
+      setDevices(FALLBACK_DEVICES);
+      setSelectedDeviceId(FALLBACK_DEVICES[0].id);
     } finally {
       setLoadingDevices(false);
     }

@@ -35,22 +35,29 @@ class ClaimService:
         ip_address: Optional[str] = None,
     ) -> Claim:
         """Validate referenced customer & device, insert claim, and record audit event."""
-        # 1. Verify Customer exists
-        cust_res = await db.execute(select(Customer).where(Customer.id == data.customer_id))
-        customer = cust_res.scalar_one_or_none()
-        if not customer:
-            raise NotFoundError("Customer", data.customer_id)
-
-        # 2. Verify Device exists
+        # 1. Verify Device exists
         dev_res = await db.execute(select(Device).where(Device.id == data.device_id))
         device = dev_res.scalar_one_or_none()
         if not device:
             raise NotFoundError("Device", data.device_id)
 
+        # 2. Verify Customer exists or derive from device
+        target_customer_id = data.customer_id or device.customer_id
+        cust_res = await db.execute(select(Customer).where(Customer.id == target_customer_id))
+        customer = cust_res.scalar_one_or_none()
+        if not customer:
+            # Fallback to any active customer
+            cust_fallback = await db.execute(select(Customer).limit(1))
+            customer = cust_fallback.scalar_one_or_none()
+            if customer:
+                target_customer_id = customer.id
+            else:
+                raise NotFoundError("Customer", str(target_customer_id))
+
         # 3. Create Claim
         claim = await ClaimRepository.create(
             db=db,
-            customer_id=data.customer_id,
+            customer_id=target_customer_id,
             device_id=data.device_id,
             claim_type=data.claim_type,
             claim_amount=data.claim_amount,

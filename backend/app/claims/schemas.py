@@ -28,6 +28,7 @@ class DeviceBrief(BaseModel):
     id: str
     serial_number: str
     product_id: str
+    customer_id: Optional[str] = None
     product: Optional[ProductBrief] = None
     purchase_date: Optional[datetime] = None
     purchase_price: Optional[float] = None

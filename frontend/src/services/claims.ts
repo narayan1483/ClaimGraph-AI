@@ -18,6 +18,7 @@ export interface DeviceBrief {
   id: string;
   serial_number: string;
   product_id: string;
+  customer_id?: string | null;
   product?: ProductBrief | null;
   purchase_date?: string | null;
   purchase_price?: number | null;
